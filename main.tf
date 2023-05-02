@@ -2,6 +2,8 @@
 # GuardDuty Detector                #
 #####################################
 resource "aws_guardduty_detector" "primary" {
+  #checkov:skip=CKV_AWS_238:Conditional argument for member accounts.
+  #checkov:skip=CKV2_AWS_3:Org/Region will be defined by the Admin account.
   count  = var.member_only ? 0 : 1
   enable = var.enable_guardduty
 
