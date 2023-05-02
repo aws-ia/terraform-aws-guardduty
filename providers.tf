@@ -1,13 +1,11 @@
-terraform {
-  required_version = ">= 1.0.7"
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = ">= 4.0.0, < 5.0.0"
-    }
-    awscc = {
-      source  = "hashicorp/awscc"
-      version = ">= 0.24.0"
-    }
-  }
+provider "aws" {
+  region = try(var.replica_region, data.aws_region.current)
+  alias  = "replica"
+}
+
+provider "aws" {
+  shared_config_files      = ["~/.aws/config"]
+  shared_credentials_files = ["~/.aws/credentials"]
+  profile                  = try(var.member_profile, "default")
+  alias                    = "member"
 }
