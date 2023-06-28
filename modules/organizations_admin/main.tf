@@ -6,7 +6,7 @@ resource "aws_guardduty_organization_admin_account" "this" {
   admin_account_id = var.admin_account_id
 }
 
-resource "aws_guardduty_organization_configuration" "admin" {
+resource "aws_guardduty_organization_configuration" "this" {
   count = var.admin_account_id == null ? 0 : 1
 
   auto_enable                      = var.auto_enable_organization_members != null ? null : var.auto_enable_org_config

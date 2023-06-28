@@ -17,5 +17,5 @@ sort:
   by: required
 
 output:
-  file: README.md
+  file: README2.md
   mode: replace
