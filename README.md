@@ -5,6 +5,12 @@
     - [Stand-Alone](#stand-alone)
     - [Organizations](#organizations)
   - [Terraform Module](#terraform-module)
+    - [Requirements](#requirements)
+    - [Providers](#providers)
+    - [Modules](#modules)
+    - [Resources](#resources)
+    - [Inputs](#inputs)
+    - [Outputs](#outputs)
 
 ## Overview Diagrams
 
