@@ -13,7 +13,7 @@ module "delegated_admin" {
 
   admin_account_id                 = data.aws_caller_identity.current.account_id
   auto_enable_organization_members = "NEW"
-  guardduty_detector_id            = module.guardduty_detector.guardduty_detector[0].id
+  guardduty_detector_id            = module.guardduty_detector.guardduty_detector.id
 
   enable_s3_protection         = true
   enable_kubernetes_protection = true
@@ -28,7 +28,7 @@ module "member" {
     aws.member = aws.member
   }
 
-  guardduty_detector_id = module.guardduty_detector.guardduty_detector[0].id
+  guardduty_detector_id = module.guardduty_detector.guardduty_detector.id
 
   member_config = [{
     enable     = true
