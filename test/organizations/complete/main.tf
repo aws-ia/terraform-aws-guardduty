@@ -1,23 +1,59 @@
 provider "aws" {}
 
+provider "aws" {
+  shared_config_files      = ["~/.aws/config"]
+  shared_credentials_files = ["~/.aws/credentials"]
+  profile                  = "member"
+  alias                    = "member"
+}
+
 data "aws_caller_identity" "current" {}
 
 data "aws_region" "current" {}
 
-module "organizations_guardduty" {
+module "delegated_admin" {
+  #  source = "github.com/rodrigobersa/terraform-aws-guardduty"
+  source = "../../../modules/organizations_admin/"
+
+  admin_account_id                 = data.aws_caller_identity.current.account_id
+  auto_enable_organization_members = "NEW"
+  guardduty_detector_id            = module.guardduty_detector.guardduty_detector[0].id
+
+  enable_s3_protection         = true
+  enable_kubernetes_protection = true
+  enable_malware_protection    = true
+}
+
+module "member" {
+  source = "../../../modules/organizations_member/"
+
+  providers = {
+    aws        = aws
+    aws.member = aws.member
+  }
+
+  guardduty_detector_id = module.guardduty_detector.guardduty_detector[0].id
+
+  member_config = [{
+    enable     = true
+    account_id = ""
+    email      = "required@example.com"
+    invite     = false
+  }]
+}
+
+module "guardduty_detector" {
   #  source = "github.com/rodrigobersa/terraform-aws-guardduty"
   source = "../../../"
 
-  enable_guardduty = true
-
-  admin_account_id       = data.aws_caller_identity.current.account_id
-  auto_enable_org_config = true
-
+  replica_region               = "us-east-1"
+  enable_guardduty             = true
   enable_s3_protection         = true
   enable_kubernetes_protection = true
   enable_malware_protection    = true
   enable_snapshot_retention    = true
   finding_publishing_frequency = "FIFTEEN_MINUTES"
+
   filter_config = [{
     name        = "guardduty_filter"
     description = "AWS GuardDuty example filter."
@@ -62,14 +98,6 @@ module "organizations_guardduty" {
 
   }]
   publish_to_s3        = true
-  guardduty_bucket_acl = "private"
+  guardduty_bucket_acl = null
   tags                 = {}
-
-  member_profile = "member"
-  member_config = [{
-    enable     = true
-    account_id = ""
-    email      = "required@example.com"
-    invite     = false
-  }]
 }

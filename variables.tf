@@ -1,10 +1,5 @@
-variable "member_profile" {
-  type = string
-  default = null
-}
-
 variable "replica_region" {
-  type = string
+  type    = string
   default = null
 }
 
@@ -44,42 +39,10 @@ variable "finding_publishing_frequency" {
   default     = "FIFTEEN_MINUTES"
 }
 
-variable "auto_enable_org_config" {
-  description = "When this setting is enabled, all new accounts that are created in, or added to, the organization are added as a member accounts of the organization’s GuardDuty delegated administrator and GuardDuty is enabled in that AWS Region."
-  type        = bool
-  default     = false
-}
-
 variable "admin_account_id" {
   description = "AWS Organizations Admin Account Id. Defaults to `null`"
   type        = string
   default     = null
-}
-
-variable "member_only" {
-  type = bool
-  default = false
-}
-
-variable "member_config" {
-  description = <<EOF
-  Specifies the member account configuration:
-  `enable`                     - Weather to enable GuardDuty in an Organizations Member Account. Defaults to `false`. 
-  `account_id`                 - The 13 digit ID number of the member account. Example: `123456789012`.
-  `email`                      - Email address to send the invite for member account. Defaults to `null`.
-  `invite`                     - Whether to invite the account to GuardDuty as a member. Defaults to `false`. To detect if an invitation needs to be (re-)sent, the Terraform state value is true based on a relationship_status of `Disabled` | `Enabled` |  `Invited` |  EmailVerificationInProgress.
-  `invitation_message`         - Message for invitation. Defaults to `null`.
-  `disable_email_notification` - Whether an email notification is sent to the accounts. Defaults to `false`.
-  EOF
-  type = list(object({
-    enable                     = bool
-    account_id                 = number
-    email                      = string
-    invite                     = bool
-    invitation_message         = optional(string)
-    disable_email_notification = optional(bool)
-  }))
-  default = null
 }
 
 variable "filter_config" {
@@ -174,9 +137,9 @@ variable "guardduty_s3_bucket" {
 }
 
 variable "guardduty_bucket_acl" {
-  description = "Canned ACL to apply to the bucket. Valid values are `private` | `public-read` | `public-read-write` | `aws-exec-read` | `authenticated-read` | `bucket-owner-read` | `bucket-owner-full-control`. Defaults to `private`."
+  description = "Canned ACL to apply to the bucket. Valid values are `private` | `public-read` | `public-read-write` | `aws-exec-read` | `authenticated-read` | `bucket-owner-read` | `bucket-owner-full-control`. Defaults to `null`."
   type        = string
-  default     = "private"
+  default     = null
 }
 
 variable "tags" {

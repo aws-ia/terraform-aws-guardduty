@@ -56,7 +56,6 @@ module "standalone_guardduty" {
     object_acl = "public-read"
 
   }]
-  publish_to_s3        = true
-  guardduty_bucket_acl = "private"
-  tags                 = {}
+  publish_to_s3 = true
+  tags          = {}
 }

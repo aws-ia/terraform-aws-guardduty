@@ -2,10 +2,6 @@ data "aws_caller_identity" "current" {}
 
 data "aws_region" "current" {}
 
-data "aws_guardduty_detector" "primary" {
-  count = var.member_only ? 1 : 0
-}
-
 data "aws_caller_identity" "admin" {
   count = var.member_config != null ? 1 : 0
 }

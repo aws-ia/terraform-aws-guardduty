@@ -1,10 +1,9 @@
-#####################################
+####################################
 # GuardDuty Detector                #
 #####################################
 resource "aws_guardduty_detector" "primary" {
   #checkov:skip=CKV_AWS_238:Conditional argument for member accounts.
   #checkov:skip=CKV2_AWS_3:Org/Region will be defined by the Admin account.
-  count  = var.member_only ? 0 : 1
   enable = var.enable_guardduty
 
   datasources {
@@ -35,86 +34,6 @@ resource "aws_guardduty_detector" "primary" {
   provisioner "local-exec" {
     command = "aws guardduty update-malware-scan-settings --detector-id ${self.id} --ebs-snapshot-preservation ${local.snapshot_preservation}"
   }
-}
-
-#####################################
-# GuardDuty Organizations Admin     #
-#####################################
-resource "aws_guardduty_organization_admin_account" "this" {
-  count            = var.admin_account_id == null ? 0 : 1
-  admin_account_id = var.admin_account_id
-}
-
-resource "aws_guardduty_organization_configuration" "admin" {
-  count = var.admin_account_id == null ? 0 : 1
-
-  auto_enable = var.auto_enable_org_config
-  detector_id = aws_guardduty_detector.primary[0].id
-
-  datasources {
-    s3_logs {
-      auto_enable = var.enable_s3_protection
-    }
-    kubernetes {
-      audit_logs {
-        enable = var.enable_kubernetes_protection
-      }
-    }
-    malware_protection {
-      scan_ec2_instance_with_findings {
-        ebs_volumes {
-          auto_enable = var.enable_malware_protection
-        }
-      }
-    }
-  }
-}
-
-#####################################
-# GuardDuty Organizations Member    #
-#####################################
-resource "aws_guardduty_detector" "member" {
-  #checkov:skip=CKV_AWS_238:Conditional argument for member accounts.
-  #checkov:skip=CKV2_AWS_3:Org/Region will be defined by the Admin account.
-  for_each = var.member_config != null ? { for member in var.member_config : member.account_id => member } : {}
-  provider = aws.member
-
-  enable = each.value.enable
-}
-
-resource "aws_guardduty_member" "member" {
-  for_each = var.member_config != null ? { for member in var.member_config : member.account_id => member } : {}
-
-  account_id                 = each.value.account_id
-  detector_id                = var.member_only ? data.aws_guardduty_detector.primary[0].id : aws_guardduty_detector.primary[0].id
-  email                      = each.value.email
-  invite                     = each.value.invite
-  invitation_message         = each.value.invitation_message
-  disable_email_notification = each.value.disable_email_notification
-
-  lifecycle {
-    ignore_changes = [
-      # For why this is necessary, see https://github.com/hashicorp/terraform-provider-aws/issues/8206
-      invite,
-      disable_email_notification,
-      invitation_message,
-    ]
-  }
-
-  provisioner "local-exec" {
-    command = "aws guardduty disassociate-members --detector-id ${self.detector_id} --account-ids ${self.account_id}"
-    when    = destroy
-  }
-}
-
-resource "aws_guardduty_invite_accepter" "member" {
-  for_each = var.member_config != null ? { for member in var.member_config : member.account_id => member if member.invite } : {}
-  provider = aws.member
-
-  detector_id       = aws_guardduty_detector.member[each.key].id
-  master_account_id = var.member_only ? data.aws_caller_identity.current.account_id : aws_guardduty_detector.primary[0].account_id
-
-  depends_on = [aws_guardduty_member.member]
 }
 
 #####################################
@@ -390,7 +309,7 @@ module "s3_bucket" {
     local.tags,
     var.tags
   )
-  
+
   depends_on = [
     module.replica_bucket
   ]
@@ -445,7 +364,7 @@ module "log_bucket" {
   version = "3.8.2"
 
   bucket = var.guardduty_s3_bucket == null ? "guardduty-${data.aws_caller_identity.current.account_id}-${random_string.this[0].result}-log-bucket" : var.guardduty_s3_bucket
-  acl    = "log-delivery-write"
+  acl    = null #"log-delivery-write"
 
   block_public_acls       = true
   block_public_policy     = true

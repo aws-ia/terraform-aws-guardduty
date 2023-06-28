@@ -4,14 +4,24 @@ data "aws_caller_identity" "current" {}
 
 data "aws_region" "current" {}
 
-module "admin_guardduty" {
+module "delegated_admin" {
+  #  source = "github.com/rodrigobersa/terraform-aws-guardduty"
+  source = "../../../modules/organizations_admin/"
+
+  admin_account_id                 = data.aws_caller_identity.current.account_id
+  auto_enable_organization_members = "NEW"
+  guardduty_detector_id            = module.guardduty_detector.guardduty_detector[0].id
+
+  enable_s3_protection         = true
+  enable_kubernetes_protection = true
+  enable_malware_protection    = true
+}
+
+module "guardduty_detector" {
   #  source = "github.com/rodrigobersa/terraform-aws-guardduty"
   source = "../../../"
 
   enable_guardduty = true
-
-  admin_account_id       = data.aws_caller_identity.current.account_id
-  auto_enable_org_config = true
 
   enable_s3_protection         = true
   enable_kubernetes_protection = true
