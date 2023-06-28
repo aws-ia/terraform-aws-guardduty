@@ -13,7 +13,7 @@ variable "master_account_id" {
 variable "member_config" {
   description = <<EOF
   Specifies the member account configuration:
-  `enable`                     - Weather to enable GuardDuty in an Organizations Member Account. Defaults to `false`. 
+  `enable`                     - Weather to enable GuardDuty in an Organizations Member Account. Defaults to `false`.
   `account_id`                 - The 13 digit ID number of the member account. Example: `123456789012`.
   `email`                      - Email address to send the invite for member account. Defaults to `null`.
   `invite`                     - Whether to invite the account to GuardDuty as a member. Defaults to `false`. To detect if an invitation needs to be (re-)sent, the Terraform state value is true based on a relationship_status of `Disabled` | `Enabled` |  `Invited` |  EmailVerificationInProgress.

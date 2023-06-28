@@ -1,15 +1,9 @@
-provider "aws" {}
-
 provider "aws" {
   shared_config_files      = ["~/.aws/config"]
   shared_credentials_files = ["~/.aws/credentials"]
   profile                  = "member"
   alias                    = "member"
 }
-
-data "aws_caller_identity" "current" {}
-
-data "aws_region" "current" {}
 
 data "aws_guardduty_detector" "primary" {}
 
@@ -25,7 +19,7 @@ module "member" {
 
   member_config = [{
     enable     = true
-    account_id = ""
+    account_id = "123456789012"
     email      = "required@example.com"
     invite     = false
   }]

@@ -1,4 +1,3 @@
-<!-- BEGIN_TF_DOCS -->
 # Terraform Module for AWS GuardDuty
 
 - [Terraform Module for AWS GuardDuty](#terraform-module-for-aws-guardduty)
@@ -6,12 +5,6 @@
     - [Stand-Alone](#stand-alone)
     - [Organizations](#organizations)
   - [Terraform Module](#terraform-module)
-    - [Requirements](#requirements)
-    - [Providers](#providers)
-    - [Modules](#modules)
-    - [Resources](#resources)
-    - [Inputs](#inputs)
-    - [Outputs](#outputs)
 
 ## Overview Diagrams
 
@@ -45,9 +38,9 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_log_bucket"></a> [log\_bucket](#module\_log\_bucket) | terraform-aws-modules/s3-bucket/aws | 3.8.2 |
-| <a name="module_replica_bucket"></a> [replica\_bucket](#module\_replica\_bucket) | terraform-aws-modules/s3-bucket/aws | 3.8.2 |
-| <a name="module_s3_bucket"></a> [s3\_bucket](#module\_s3\_bucket) | terraform-aws-modules/s3-bucket/aws | 3.8.2 |
+| <a name="module_log_bucket"></a> [log\_bucket](#module\_log\_bucket) | terraform-aws-modules/s3-bucket/aws | 3.14.0 |
+| <a name="module_replica_bucket"></a> [replica\_bucket](#module\_replica\_bucket) | terraform-aws-modules/s3-bucket/aws | 3.14.0 |
+| <a name="module_s3_bucket"></a> [s3\_bucket](#module\_s3\_bucket) | terraform-aws-modules/s3-bucket/aws | 3.14.0 |
 
 ### Resources
 
@@ -66,7 +59,6 @@
 | [aws_s3_object.ipset_object](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_object) | resource |
 | [aws_s3_object.threatintelset_object](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_object) | resource |
 | [random_string.this](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
-| [aws_caller_identity.admin](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_iam_policy_document.bucket_replication](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.bucket_replication_assume_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
@@ -79,7 +71,6 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_admin_account_id"></a> [admin\_account\_id](#input\_admin\_account\_id) | AWS Organizations Admin Account Id. Defaults to `null` | `string` | `null` | no |
 | <a name="input_enable_guardduty"></a> [enable\_guardduty](#input\_enable\_guardduty) | Enable monitoring and feedback reporting. Setting to false is equivalent to 'suspending' GuardDuty. Defaults to `true`. | `bool` | `true` | no |
 | <a name="input_enable_kubernetes_protection"></a> [enable\_kubernetes\_protection](#input\_enable\_kubernetes\_protection) | Configure and enable Kubernetes audit logs as a data source for Kubernetes protection. Defaults to `true`. | `bool` | `true` | no |
 | <a name="input_enable_malware_protection"></a> [enable\_malware\_protection](#input\_enable\_malware\_protection) | Configure and enable Malware Protection as data source for EC2 instances with findings for the detector. Defaults to `true`. | `bool` | `true` | no |
@@ -89,12 +80,12 @@
 | <a name="input_finding_publishing_frequency"></a> [finding\_publishing\_frequency](#input\_finding\_publishing\_frequency) | Specifies the frequency of notifications sent for subsequent finding occurrences. If the detector is a GuardDuty member account, the value is determined by the GuardDuty primary account and cannot be modified. For standalone and GuardDuty primary accounts, it must be configured in Terraform to enable drift detection. Valid values for standalone and primary accounts: `FIFTEEN_MINUTES`, `ONE_HOUR`, `SIX_HOURS`. Defaults to `SIX_HOURS`. | `string` | `"FIFTEEN_MINUTES"` | no |
 | <a name="input_guardduty_bucket_acl"></a> [guardduty\_bucket\_acl](#input\_guardduty\_bucket\_acl) | Canned ACL to apply to the bucket. Valid values are `private` \| `public-read` \| `public-read-write` \| `aws-exec-read` \| `authenticated-read` \| `bucket-owner-read` \| `bucket-owner-full-control`. Defaults to `null`. | `string` | `null` | no |
 | <a name="input_guardduty_s3_bucket"></a> [guardduty\_s3\_bucket](#input\_guardduty\_s3\_bucket) | Name of the S3 Bucket for GuardDuty. Defaults to `null`. | `string` | `null` | no |
-| <a name="input_ipset_config"></a> [ipset\_config](#input\_ipset\_config) | Specifies AWS GuardDuty IPSet configuration.<br>  `activate` - Specifies whether GuardDuty is to start using the uploaded IPSet.<br>  `name` - The friendly name to identify the IPSet. <br>  `format` - The format of the file that contains the IPSet. Valid values: `TXT` \| `STIX` \| `OTX_CSV` \| `ALIEN_VAULT` \| `PROOF_POINT` \| `FIRE_EYE`. <br>  `content`- Literal string value to use as the object content, which will be uploaded as UTF-8-encoded text. Example: `10.0.0.0/8\n`.<br>  `key` - Name of the object once it is in the bucket. | <pre>list(object({<br>    activate = bool<br>    name     = string<br>    format   = string<br>    content  = string<br>    key      = string<br>  }))</pre> | `null` | no |
-| <a name="input_publish_to_s3"></a> [publish\_to\_s3](#input\_publish\_to\_s3) | n/a | `bool` | `false` | no |
-| <a name="input_publishing_config"></a> [publishing\_config](#input\_publishing\_config) | n/a | <pre>list(object({<br>    destination_arn  = string<br>    kms_key_arn      = string<br>    destination_type = optional(string)<br>  }))</pre> | <pre>[<br>  {<br>    "destination_arn": null,<br>    "destination_type": "S3",<br>    "kms_key_arn": null<br>  }<br>]</pre> | no |
-| <a name="input_replica_region"></a> [replica\_region](#input\_replica\_region) | n/a | `string` | `null` | no |
+| <a name="input_ipset_config"></a> [ipset\_config](#input\_ipset\_config) | Specifies AWS GuardDuty IPSet configuration.<br>  `activate` - Specifies whether GuardDuty is to start using the uploaded IPSet.<br>  `name` - The friendly name to identify the IPSet.<br>  `format` - The format of the file that contains the IPSet. Valid values: `TXT` \| `STIX` \| `OTX_CSV` \| `ALIEN_VAULT` \| `PROOF_POINT` \| `FIRE_EYE`.<br>  `content`- Literal string value to use as the object content, which will be uploaded as UTF-8-encoded text. Example: `10.0.0.0/8\n`.<br>  `key` - Name of the object once it is in the bucket. | <pre>list(object({<br>    activate = bool<br>    name     = string<br>    format   = string<br>    content  = string<br>    key      = string<br>  }))</pre> | `null` | no |
+| <a name="input_publish_to_s3"></a> [publish\_to\_s3](#input\_publish\_to\_s3) | Specifies if the Amazon GuardDuty findings should be exported to S3. Defaults to `false`. | `bool` | `false` | no |
+| <a name="input_publishing_config"></a> [publishing\_config](#input\_publishing\_config) | Defines the findings publishing configuration. | <pre>list(object({<br>    destination_arn  = string<br>    kms_key_arn      = string<br>    destination_type = optional(string)<br>  }))</pre> | <pre>[<br>  {<br>    "destination_arn": null,<br>    "destination_type": "S3",<br>    "kms_key_arn": null<br>  }<br>]</pre> | no |
+| <a name="input_replica_region"></a> [replica\_region](#input\_replica\_region) | Region where S3 bucket data from Amazon GuardDuty will be replicated. Defaults to `null`. | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Key-value map of resource tags. If configured with a provider default\_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level. Defaults to `{}`. | `map(any)` | `{}` | no |
-| <a name="input_threatintelset_config"></a> [threatintelset\_config](#input\_threatintelset\_config) | Specifies AWS GuardDuty ThreatIntelSet configuration.<br>  `activate` - Specifies whether GuardDuty is to start using the uploaded ThreatIntelSet.<br>  `name` - The friendly name to identify the ThreatIntelSet. <br>  `format` - The format of the file that contains the ThreatIntelSet. Valid values: `TXT` \| `STIX` \| `OTX_CSV` \| `ALIEN_VAULT` \| `PROOF_POINT` \| `FIRE_EYE`.<br>  `content`- Literal string value to use as the object content, which will be uploaded as UTF-8-encoded text. Example: `10.0.0.0/8\n`. <br>  `key` - Name of the object once it is in the bucket. <br>  `object_acl`- Canned ACL to apply to the object. Valid values are `private` \| `public-read` \| `public-read-write` \| `aws-exec-read` \| `authenticated-read` \| `bucket-owner-read` \| `bucket-owner-full-control`. | <pre>list(object({<br>    activate   = bool<br>    name       = string<br>    format     = string<br>    content    = string<br>    key        = string<br>    object_acl = string<br>  }))</pre> | `null` | no |
+| <a name="input_threatintelset_config"></a> [threatintelset\_config](#input\_threatintelset\_config) | Specifies AWS GuardDuty ThreatIntelSet configuration.<br>  `activate` - Specifies whether GuardDuty is to start using the uploaded ThreatIntelSet.<br>  `name` - The friendly name to identify the ThreatIntelSet.<br>  `format` - The format of the file that contains the ThreatIntelSet. Valid values: `TXT` \| `STIX` \| `OTX_CSV` \| `ALIEN_VAULT` \| `PROOF_POINT` \| `FIRE_EYE`.<br>  `content`- Literal string value to use as the object content, which will be uploaded as UTF-8-encoded text. Example: `10.0.0.0/8\n`.<br>  `key` - Name of the object once it is in the bucket.<br>  `object_acl`- Canned ACL to apply to the object. Valid values are `private` \| `public-read` \| `public-read-write` \| `aws-exec-read` \| `authenticated-read` \| `bucket-owner-read` \| `bucket-owner-full-control`. | <pre>list(object({<br>    activate   = bool<br>    name       = string<br>    format     = string<br>    content    = string<br>    key        = string<br>    object_acl = string<br>  }))</pre> | `null` | no |
 
 ### Outputs
 
@@ -107,4 +98,3 @@
 | <a name="output_guardduty_publishing"></a> [guardduty\_publishing](#output\_guardduty\_publishing) | AWS GuardDuty Publishing destination to export findings. |
 | <a name="output_guardduty_s3_bucket"></a> [guardduty\_s3\_bucket](#output\_guardduty\_s3\_bucket) | Amazon S3 Bucket created for AWS GuardDuty. |
 | <a name="output_guardduty_threatintelset"></a> [guardduty\_threatintelset](#output\_guardduty\_threatintelset) | AWS GuardDuty known ThreatIntelSet configuration. |
-<!-- END_TF_DOCS -->

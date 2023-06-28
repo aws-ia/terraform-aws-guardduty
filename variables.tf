@@ -1,6 +1,7 @@
 variable "replica_region" {
-  type    = string
-  default = null
+  description = "Region where S3 bucket data from Amazon GuardDuty will be replicated. Defaults to `null`."
+  type        = string
+  default     = null
 }
 
 variable "enable_guardduty" {
@@ -39,12 +40,6 @@ variable "finding_publishing_frequency" {
   default     = "FIFTEEN_MINUTES"
 }
 
-variable "admin_account_id" {
-  description = "AWS Organizations Admin Account Id. Defaults to `null`"
-  type        = string
-  default     = null
-}
-
 variable "filter_config" {
   description = <<EOF
   Specifies AWS GuardDuty Filter configuration.
@@ -75,8 +70,8 @@ variable "ipset_config" {
   description = <<EOF
   Specifies AWS GuardDuty IPSet configuration.
   `activate` - Specifies whether GuardDuty is to start using the uploaded IPSet.
-  `name` - The friendly name to identify the IPSet. 
-  `format` - The format of the file that contains the IPSet. Valid values: `TXT` | `STIX` | `OTX_CSV` | `ALIEN_VAULT` | `PROOF_POINT` | `FIRE_EYE`. 
+  `name` - The friendly name to identify the IPSet.
+  `format` - The format of the file that contains the IPSet. Valid values: `TXT` | `STIX` | `OTX_CSV` | `ALIEN_VAULT` | `PROOF_POINT` | `FIRE_EYE`.
   `content`- Literal string value to use as the object content, which will be uploaded as UTF-8-encoded text. Example: `10.0.0.0/8\n`.
   `key` - Name of the object once it is in the bucket.
   EOF
@@ -94,10 +89,10 @@ variable "threatintelset_config" {
   description = <<EOF
   Specifies AWS GuardDuty ThreatIntelSet configuration.
   `activate` - Specifies whether GuardDuty is to start using the uploaded ThreatIntelSet.
-  `name` - The friendly name to identify the ThreatIntelSet. 
+  `name` - The friendly name to identify the ThreatIntelSet.
   `format` - The format of the file that contains the ThreatIntelSet. Valid values: `TXT` | `STIX` | `OTX_CSV` | `ALIEN_VAULT` | `PROOF_POINT` | `FIRE_EYE`.
-  `content`- Literal string value to use as the object content, which will be uploaded as UTF-8-encoded text. Example: `10.0.0.0/8\n`. 
-  `key` - Name of the object once it is in the bucket. 
+  `content`- Literal string value to use as the object content, which will be uploaded as UTF-8-encoded text. Example: `10.0.0.0/8\n`.
+  `key` - Name of the object once it is in the bucket.
   `object_acl`- Canned ACL to apply to the object. Valid values are `private` | `public-read` | `public-read-write` | `aws-exec-read` | `authenticated-read` | `bucket-owner-read` | `bucket-owner-full-control`.
   EOF
   type = list(object({
@@ -112,12 +107,13 @@ variable "threatintelset_config" {
 }
 
 variable "publish_to_s3" {
-  type    = bool
-  default = false
+  description = "Specifies if the Amazon GuardDuty findings should be exported to S3. Defaults to `false`."
+  type        = bool
+  default     = false
 }
 
 variable "publishing_config" {
-  description = ""
+  description = "Defines the findings publishing configuration."
   type = list(object({
     destination_arn  = string
     kms_key_arn      = string

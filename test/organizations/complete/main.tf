@@ -1,5 +1,3 @@
-provider "aws" {}
-
 provider "aws" {
   shared_config_files      = ["~/.aws/config"]
   shared_credentials_files = ["~/.aws/credentials"]
@@ -8,8 +6,6 @@ provider "aws" {
 }
 
 data "aws_caller_identity" "current" {}
-
-data "aws_region" "current" {}
 
 module "delegated_admin" {
   #  source = "github.com/rodrigobersa/terraform-aws-guardduty"
@@ -36,7 +32,7 @@ module "member" {
 
   member_config = [{
     enable     = true
-    account_id = ""
+    account_id = "123456789012"
     email      = "required@example.com"
     invite     = false
   }]
@@ -98,6 +94,6 @@ module "guardduty_detector" {
 
   }]
   publish_to_s3        = true
-  guardduty_bucket_acl = null
+  guardduty_bucket_acl = "private"
   tags                 = {}
 }

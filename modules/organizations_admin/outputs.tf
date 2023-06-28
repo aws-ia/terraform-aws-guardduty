@@ -5,5 +5,5 @@ output "guardduty_delegated_admin_account" {
 
 output "guardduty_organization_configuration" {
   description = "AWS GuardDuty Organizations configuration."
-  value       = guardduty_organization_configuration.this
+  value       = aws_guardduty_organization_configuration.this
 }

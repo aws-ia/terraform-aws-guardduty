@@ -2,10 +2,6 @@ data "aws_caller_identity" "current" {}
 
 data "aws_region" "current" {}
 
-data "aws_caller_identity" "admin" {
-  count = var.member_config != null ? 1 : 0
-}
-
 data "aws_iam_policy_document" "guardduty_bucket_policy" {
   count = var.ipset_config != null || var.threatintelset_config != null || var.publish_to_s3 ? 1 : 0
 

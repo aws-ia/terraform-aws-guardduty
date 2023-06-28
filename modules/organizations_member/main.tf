@@ -1,3 +1,7 @@
+provider "aws" {
+  alias = "member"
+}
+
 #####################################
 # GuardDuty Organizations Member    #
 #####################################
@@ -19,7 +23,7 @@ resource "aws_guardduty_invite_accepter" "member" {
   detector_id       = aws_guardduty_detector.member[each.key].id
   master_account_id = var.master_account_id == null ? data.aws_caller_identity.current.account_id : var.master_account_id
 
-  depends_on = [aws_guardduty_member.member]
+  depends_on = [aws_guardduty_member.this]
 }
 
 resource "aws_guardduty_member" "this" {

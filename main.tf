@@ -42,7 +42,7 @@ resource "aws_guardduty_detector" "primary" {
 resource "aws_guardduty_filter" "this" {
   for_each = var.enable_guardduty && var.filter_config != null ? { for filter in var.filter_config : filter.name => filter } : {}
 
-  detector_id = aws_guardduty_detector.primary[0].id
+  detector_id = aws_guardduty_detector.primary.id
 
   name        = each.value.name
   action      = each.value.action
@@ -76,7 +76,7 @@ resource "aws_guardduty_filter" "this" {
 resource "aws_guardduty_ipset" "this" {
   for_each = var.enable_guardduty && var.ipset_config != null ? { for ipset in var.ipset_config : ipset.name => ipset } : {}
 
-  detector_id = aws_guardduty_detector.primary[0].id
+  detector_id = aws_guardduty_detector.primary.id
 
   activate = each.value.activate
   name     = each.value.name
@@ -109,7 +109,7 @@ resource "aws_s3_object" "ipset_object" {
 resource "aws_guardduty_threatintelset" "this" {
   for_each = var.enable_guardduty && var.threatintelset_config != null ? { for threatintelset in var.threatintelset_config : threatintelset.name => threatintelset } : {}
 
-  detector_id = aws_guardduty_detector.primary[0].id
+  detector_id = aws_guardduty_detector.primary.id
 
   activate = each.value.activate
   name     = each.value.name
@@ -142,7 +142,7 @@ resource "aws_s3_object" "threatintelset_object" {
 resource "aws_guardduty_publishing_destination" "this" {
   for_each = var.enable_guardduty && var.publish_to_s3 ? { for destination in var.publishing_config : destination.destination_type => destination } : {}
 
-  detector_id      = aws_guardduty_detector.primary[0].id
+  detector_id      = aws_guardduty_detector.primary.id
   destination_arn  = each.value.destination_arn == null ? module.s3_bucket[0].s3_bucket_arn : each.value.destination_arn
   kms_key_arn      = each.value.kms_key_arn == null ? aws_kms_key.guardduty_key[0].arn : each.value.kms_key_arn
   destination_type = each.value.destination_type
@@ -230,7 +230,7 @@ module "s3_bucket" {
   count = var.ipset_config != null || var.threatintelset_config != null || var.publish_to_s3 ? 1 : 0
 
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "3.8.2"
+  version = "3.14.0"
 
   bucket = var.guardduty_s3_bucket == null ? "guardduty-${data.aws_caller_identity.current.account_id}-${random_string.this[0].result}-bucket" : var.guardduty_s3_bucket
   acl    = var.guardduty_bucket_acl
@@ -323,7 +323,7 @@ module "replica_bucket" {
   }
 
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "3.8.2"
+  version = "3.14.0"
 
   bucket = var.guardduty_s3_bucket == null ? "guardduty-${data.aws_caller_identity.current.account_id}-${random_string.this[0].result}-replica-bucket" : var.guardduty_s3_bucket
   acl    = var.guardduty_bucket_acl
@@ -361,7 +361,7 @@ module "log_bucket" {
   count = var.ipset_config != null || var.threatintelset_config != null || var.publish_to_s3 ? 1 : 0
 
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "3.8.2"
+  version = "3.14.0"
 
   bucket = var.guardduty_s3_bucket == null ? "guardduty-${data.aws_caller_identity.current.account_id}-${random_string.this[0].result}-log-bucket" : var.guardduty_s3_bucket
   acl    = null #"log-delivery-write"

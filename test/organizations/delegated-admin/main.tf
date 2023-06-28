@@ -1,8 +1,4 @@
-provider "aws" {}
-
 data "aws_caller_identity" "current" {}
-
-data "aws_region" "current" {}
 
 module "delegated_admin" {
   #  source = "github.com/rodrigobersa/terraform-aws-guardduty"

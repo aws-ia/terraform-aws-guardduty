@@ -1,7 +1,3 @@
-data "aws_caller_identity" "current" {}
-
-data "aws_region" "current" {}
-
 module "standalone_guardduty" {
   #  source = "github.com/rodrigobersa/terraform-aws-guardduty"
   source = "../../../"
@@ -56,6 +52,7 @@ module "standalone_guardduty" {
     object_acl = "public-read"
 
   }]
-  publish_to_s3 = true
-  tags          = {}
+  publish_to_s3        = true
+  guardduty_bucket_acl = "private"
+  tags                 = {}
 }

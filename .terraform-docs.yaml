@@ -11,6 +11,7 @@ settings:
   sensitive: true
   type: true
   lockfile: false
+  footer: true
 
 sort:
   enabled: true
@@ -19,3 +20,6 @@ sort:
 output:
   file: README.md
   mode: replace
+  template: |-
+    {{ .Content }}
+    {{- printf "\n" -}}
