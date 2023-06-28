@@ -6,7 +6,7 @@ settings:
   default: true
   escape: true
   html: true
-  indent: 2
+  indent: 3
   required: true
   sensitive: true
   type: true
@@ -17,5 +17,5 @@ sort:
   by: required
 
 output:
-  file: README2.md
+  file: README.md
   mode: replace

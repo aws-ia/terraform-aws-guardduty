@@ -1,17 +1,31 @@
+<!-- BEGIN_TF_DOCS -->
 # Terraform Module for AWS GuardDuty
+
+- [Terraform Module for AWS GuardDuty](#terraform-module-for-aws-guardduty)
+  - [Overview Diagrams](#overview-diagrams)
+    - [Stand-Alone](#stand-alone)
+    - [Organizations](#organizations)
+  - [Terraform Module](#terraform-module)
+    - [Requirements](#requirements)
+    - [Providers](#providers)
+    - [Modules](#modules)
+    - [Resources](#resources)
+    - [Inputs](#inputs)
+    - [Outputs](#outputs)
 
 ## Overview Diagrams
 
 ### Stand-Alone
 
-![standalone-diagram](./docs/StandaloneGuardDuty_v1.png)
+![standalone-diagram](./docs/StandaloneGuardDuty\_v1.png)
 
 ### Organizations
 
-![organizations-diagram](./docs/OrgGuardDuty_v1.png)
+![organizations-diagram](./docs/OrgGuardDuty\_v1.png)
 
----
-## Requirements
+## Terraform Module
+
+### Requirements
 
 | Name | Version |
 |------|---------|
@@ -19,7 +33,7 @@
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.47 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3.4 |
 
-## Providers
+### Providers
 
 | Name | Version |
 |------|---------|
@@ -27,7 +41,7 @@
 | <a name="provider_aws.replica"></a> [aws.replica](#provider\_aws.replica) | >= 4.47 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.4 |
 
-## Modules
+### Modules
 
 | Name | Source | Version |
 |------|--------|---------|
@@ -35,7 +49,7 @@
 | <a name="module_replica_bucket"></a> [replica\_bucket](#module\_replica\_bucket) | terraform-aws-modules/s3-bucket/aws | 3.8.2 |
 | <a name="module_s3_bucket"></a> [s3\_bucket](#module\_s3\_bucket) | terraform-aws-modules/s3-bucket/aws | 3.8.2 |
 
-## Resources
+### Resources
 
 | Name | Type |
 |------|------|
@@ -61,7 +75,7 @@
 | [aws_iam_policy_document.guardduty_replica_bucket_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
-## Inputs
+### Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
@@ -82,7 +96,7 @@
 | <a name="input_tags"></a> [tags](#input\_tags) | Key-value map of resource tags. If configured with a provider default\_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level. Defaults to `{}`. | `map(any)` | `{}` | no |
 | <a name="input_threatintelset_config"></a> [threatintelset\_config](#input\_threatintelset\_config) | Specifies AWS GuardDuty ThreatIntelSet configuration.<br>  `activate` - Specifies whether GuardDuty is to start using the uploaded ThreatIntelSet.<br>  `name` - The friendly name to identify the ThreatIntelSet. <br>  `format` - The format of the file that contains the ThreatIntelSet. Valid values: `TXT` \| `STIX` \| `OTX_CSV` \| `ALIEN_VAULT` \| `PROOF_POINT` \| `FIRE_EYE`.<br>  `content`- Literal string value to use as the object content, which will be uploaded as UTF-8-encoded text. Example: `10.0.0.0/8\n`. <br>  `key` - Name of the object once it is in the bucket. <br>  `object_acl`- Canned ACL to apply to the object. Valid values are `private` \| `public-read` \| `public-read-write` \| `aws-exec-read` \| `authenticated-read` \| `bucket-owner-read` \| `bucket-owner-full-control`. | <pre>list(object({<br>    activate   = bool<br>    name       = string<br>    format     = string<br>    content    = string<br>    key        = string<br>    object_acl = string<br>  }))</pre> | `null` | no |
 
-## Outputs
+### Outputs
 
 | Name | Description |
 |------|-------------|
@@ -93,3 +107,4 @@
 | <a name="output_guardduty_publishing"></a> [guardduty\_publishing](#output\_guardduty\_publishing) | AWS GuardDuty Publishing destination to export findings. |
 | <a name="output_guardduty_s3_bucket"></a> [guardduty\_s3\_bucket](#output\_guardduty\_s3\_bucket) | Amazon S3 Bucket created for AWS GuardDuty. |
 | <a name="output_guardduty_threatintelset"></a> [guardduty\_threatintelset](#output\_guardduty\_threatintelset) | AWS GuardDuty known ThreatIntelSet configuration. |
+<!-- END_TF_DOCS -->
