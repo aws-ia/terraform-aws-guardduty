@@ -1,7 +1,3 @@
-# provider "aws" {
-#   alias = "member"
-# }
-
 #####################################
 # GuardDuty Organizations Member    #
 #####################################
