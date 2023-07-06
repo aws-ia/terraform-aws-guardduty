@@ -10,8 +10,8 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.47 |
-| <a name="provider_aws.member"></a> [aws.member](#provider\_aws.member) | >= 4.47 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.5.0 |
+| <a name="provider_aws.member"></a> [aws.member](#provider\_aws.member) | 5.5.0 |
 
 ## Modules
 
@@ -32,7 +32,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_guardduty_detector_id"></a> [guardduty\_detector\_id](#input\_guardduty\_detector\_id) | The detector ID of the GuardDuty account. Defaults to `null`. | `string` | `null` | no |
 | <a name="input_master_account_id"></a> [master\_account\_id](#input\_master\_account\_id) | AWS account ID for primary account. Defaults to `null` | `string` | `null` | no |
-| <a name="input_member_config"></a> [member\_config](#input\_member\_config) | Specifies the member account configuration:<br>  `enable`                     - Weather to enable GuardDuty in an Organizations Member Account. Defaults to `false`. <br>  `account_id`                 - The 13 digit ID number of the member account. Example: `123456789012`.<br>  `email`                      - Email address to send the invite for member account. Defaults to `null`.<br>  `invite`                     - Whether to invite the account to GuardDuty as a member. Defaults to `false`. To detect if an invitation needs to be (re-)sent, the Terraform state value is true based on a relationship\_status of `Disabled` \| `Enabled` \|  `Invited` \|  EmailVerificationInProgress.<br>  `invitation_message`         - Message for invitation. Defaults to `null`.<br>  `disable_email_notification` - Whether an email notification is sent to the accounts. Defaults to `false`. | <pre>list(object({<br>    enable                     = bool<br>    account_id                 = number<br>    email                      = string<br>    invite                     = bool<br>    invitation_message         = optional(string)<br>    disable_email_notification = optional(bool)<br>  }))</pre> | `null` | no |
+| <a name="input_member_config"></a> [member\_config](#input\_member\_config) | Specifies the member account configuration:<br>  `enable`                     - Weather to enable GuardDuty in an Organizations Member Account. Defaults to `false`.<br>  `account_id`                 - The 13 digit ID number of the member account. Example: `123456789012`.<br>  `email`                      - Email address to send the invite for member account. Defaults to `null`.<br>  `invite`                     - Whether to invite the account to GuardDuty as a member. Defaults to `false`. To detect if an invitation needs to be (re-)sent, the Terraform state value is true based on a relationship\_status of `Disabled` \| `Enabled` \|  `Invited` \|  EmailVerificationInProgress.<br>  `invitation_message`         - Message for invitation. Defaults to `null`.<br>  `disable_email_notification` - Whether an email notification is sent to the accounts. Defaults to `false`. | <pre>list(object({<br>    enable                     = bool<br>    account_id                 = number<br>    email                      = string<br>    invite                     = bool<br>    invitation_message         = optional(string)<br>    disable_email_notification = optional(bool)<br>  }))</pre> | `null` | no |
 
 ## Outputs
 

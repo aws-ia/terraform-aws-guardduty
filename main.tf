@@ -1,6 +1,14 @@
-####################################
-# GuardDuty Detector                #
-#####################################
+locals {
+  snapshot_preservation = var.enable_snapshot_retention ? "'RETENTION_WITH_FINDING'" : "'NO_RETENTION'"
+  tags = {
+    Example    = basename(path.cwd)
+    Repository = "https://github.com/rodrigobersa/terraform-aws-guardduty"
+  }
+}
+
+##################################################
+# GuardDuty Detector
+##################################################
 resource "aws_guardduty_detector" "primary" {
   #checkov:skip=CKV_AWS_238:Conditional argument for member accounts.
   #checkov:skip=CKV2_AWS_3:Org/Region will be defined by the Admin account.
@@ -36,9 +44,9 @@ resource "aws_guardduty_detector" "primary" {
   }
 }
 
-#####################################
-# GuardDuty Filter                  #
-#####################################
+##################################################
+# GuardDuty Filter
+##################################################
 resource "aws_guardduty_filter" "this" {
   for_each = var.enable_guardduty && var.filter_config != null ? { for filter in var.filter_config : filter.name => filter } : {}
 
@@ -70,9 +78,9 @@ resource "aws_guardduty_filter" "this" {
   )
 }
 
-#####################################
-# GuardDuty IPSet                   #
-#####################################
+##################################################
+# GuardDuty IPSet
+##################################################
 resource "aws_guardduty_ipset" "this" {
   for_each = var.enable_guardduty && var.ipset_config != null ? { for ipset in var.ipset_config : ipset.name => ipset } : {}
 
@@ -103,9 +111,9 @@ resource "aws_s3_object" "ipset_object" {
   )
 }
 
-#####################################
-# GuardDuty ThreatIntelSet          #
-#####################################
+##################################################
+# GuardDuty ThreatIntelSet
+##################################################
 resource "aws_guardduty_threatintelset" "this" {
   for_each = var.enable_guardduty && var.threatintelset_config != null ? { for threatintelset in var.threatintelset_config : threatintelset.name => threatintelset } : {}
 
@@ -136,9 +144,9 @@ resource "aws_s3_object" "threatintelset_object" {
   )
 }
 
-#####################################
-# GuardDuty Publishing Destination  #
-#####################################
+##################################################
+# GuardDuty Publishing Destination
+##################################################
 resource "aws_guardduty_publishing_destination" "this" {
   for_each = var.enable_guardduty && var.publish_to_s3 ? { for destination in var.publishing_config : destination.destination_type => destination } : {}
 
@@ -153,9 +161,9 @@ resource "aws_guardduty_publishing_destination" "this" {
   ]
 }
 
-#####################################
-# Support Resources                 #
-#####################################
+##################################################
+# Supporting Resources
+##################################################
 resource "random_string" "this" {
   count = var.ipset_config != null || var.threatintelset_config != null || var.publish_to_s3 ? 1 : 0
 
@@ -164,9 +172,9 @@ resource "random_string" "this" {
   special = false
 }
 
-#####################################
-# KMS Key                           #
-#####################################
+##################################################
+# KMS Key
+##################################################
 resource "aws_kms_key" "guardduty_key" {
   count = var.ipset_config != null || var.threatintelset_config != null || var.publish_to_s3 ? 1 : 0
 
@@ -199,9 +207,9 @@ resource "aws_kms_key" "replica_key" {
   )
 }
 
-#####################################
-# IAM                               #
-#####################################
+##################################################
+# IAM
+##################################################
 resource "aws_iam_role" "bucket_replication" {
   count = var.ipset_config != null || var.threatintelset_config != null || var.publish_to_s3 ? 1 : 0
 
@@ -223,9 +231,9 @@ resource "aws_iam_role_policy_attachment" "replication" {
   policy_arn = aws_iam_policy.bucket_replication[0].arn
 }
 
-#####################################
-# S3 Buckets                        #
-#####################################
+##################################################
+# S3 Buckets
+##################################################
 module "s3_bucket" {
   count = var.ipset_config != null || var.threatintelset_config != null || var.publish_to_s3 ? 1 : 0
 
@@ -313,6 +321,11 @@ module "s3_bucket" {
   depends_on = [
     module.replica_bucket
   ]
+}
+
+provider "aws" {
+  region = try(var.replica_region, data.aws_region.current)
+  alias  = "replica"
 }
 
 module "replica_bucket" {

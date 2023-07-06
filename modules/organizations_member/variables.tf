@@ -1,3 +1,6 @@
+##################################################
+# GuardDuty Organizations Detector Member
+##################################################
 variable "guardduty_detector_id" {
   description = "The detector ID of the GuardDuty account. Defaults to `null`."
   type        = string
@@ -10,6 +13,9 @@ variable "master_account_id" {
   default     = null
 }
 
+##################################################
+# GuardDuty Organizations Member
+##################################################
 variable "member_config" {
   description = <<EOF
   Specifies the member account configuration:

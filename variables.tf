@@ -4,6 +4,9 @@ variable "replica_region" {
   default     = null
 }
 
+##################################################
+# GuardDuty Detector
+##################################################
 variable "enable_guardduty" {
   description = "Enable monitoring and feedback reporting. Setting to false is equivalent to 'suspending' GuardDuty. Defaults to `true`."
   type        = bool
@@ -40,6 +43,10 @@ variable "finding_publishing_frequency" {
   default     = "FIFTEEN_MINUTES"
 }
 
+
+##################################################
+# GuardDuty Filter
+##################################################
 variable "filter_config" {
   description = <<EOF
   Specifies AWS GuardDuty Filter configuration.
@@ -66,6 +73,9 @@ variable "filter_config" {
   default = null
 }
 
+##################################################
+# GuardDuty IPSet
+##################################################
 variable "ipset_config" {
   description = <<EOF
   Specifies AWS GuardDuty IPSet configuration.
@@ -85,6 +95,9 @@ variable "ipset_config" {
   default = null
 }
 
+##################################################
+# GuardDuty ThreatIntelSet
+##################################################
 variable "threatintelset_config" {
   description = <<EOF
   Specifies AWS GuardDuty ThreatIntelSet configuration.
@@ -106,6 +119,9 @@ variable "threatintelset_config" {
   default = null
 }
 
+##################################################
+# GuardDuty Publishing
+##################################################
 variable "publish_to_s3" {
   description = "Specifies if the Amazon GuardDuty findings should be exported to S3. Defaults to `false`."
   type        = bool
