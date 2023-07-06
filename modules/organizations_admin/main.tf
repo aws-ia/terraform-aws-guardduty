@@ -1,6 +1,6 @@
-#####################################
-# GuardDuty Organizations Admin     #
-#####################################
+##################################################
+# GuardDuty Organizations Delegated Admin
+##################################################
 resource "aws_guardduty_organization_admin_account" "this" {
   count            = var.admin_account_id == null ? 0 : 1
   admin_account_id = var.admin_account_id

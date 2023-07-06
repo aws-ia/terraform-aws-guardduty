@@ -1,3 +1,6 @@
+##################################################
+# GuardDuty Organizations Delegated Admin
+##################################################
 variable "guardduty_detector_id" {
   description = "The detector ID of the GuardDuty account."
   type        = string
