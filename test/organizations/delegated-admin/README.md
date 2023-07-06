@@ -12,7 +12,8 @@ No requirements.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_admin_guardduty"></a> [admin\_guardduty](#module\_admin\_guardduty) | ../../../ | n/a |
+| <a name="module_delegated_admin"></a> [delegated\_admin](#module\_delegated\_admin) | ../../../modules/organizations_admin/ | n/a |
+| <a name="module_guardduty_detector"></a> [guardduty\_detector](#module\_guardduty\_detector) | ../../../ | n/a |
 
 ## Resources
 

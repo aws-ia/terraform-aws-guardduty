@@ -1,10 +1,17 @@
-#####################################
-# GuardDuty Detector                #
-#####################################
+locals {
+  snapshot_preservation = var.enable_snapshot_retention ? "'RETENTION_WITH_FINDING'" : "'NO_RETENTION'"
+  tags = {
+    Example    = basename(path.cwd)
+    Repository = "https://github.com/rodrigobersa/terraform-aws-guardduty"
+  }
+}
+
+##################################################
+# GuardDuty Detector
+##################################################
 resource "aws_guardduty_detector" "primary" {
   #checkov:skip=CKV_AWS_238:Conditional argument for member accounts.
   #checkov:skip=CKV2_AWS_3:Org/Region will be defined by the Admin account.
-  count  = var.member_only ? 0 : 1
   enable = var.enable_guardduty
 
   datasources {
@@ -37,93 +44,13 @@ resource "aws_guardduty_detector" "primary" {
   }
 }
 
-#####################################
-# GuardDuty Organizations Admin     #
-#####################################
-resource "aws_guardduty_organization_admin_account" "this" {
-  count            = var.admin_account_id == null ? 0 : 1
-  admin_account_id = var.admin_account_id
-}
-
-resource "aws_guardduty_organization_configuration" "admin" {
-  count = var.admin_account_id == null ? 0 : 1
-
-  auto_enable = var.auto_enable_org_config
-  detector_id = aws_guardduty_detector.primary[0].id
-
-  datasources {
-    s3_logs {
-      auto_enable = var.enable_s3_protection
-    }
-    kubernetes {
-      audit_logs {
-        enable = var.enable_kubernetes_protection
-      }
-    }
-    malware_protection {
-      scan_ec2_instance_with_findings {
-        ebs_volumes {
-          auto_enable = var.enable_malware_protection
-        }
-      }
-    }
-  }
-}
-
-#####################################
-# GuardDuty Organizations Member    #
-#####################################
-resource "aws_guardduty_detector" "member" {
-  #checkov:skip=CKV_AWS_238:Conditional argument for member accounts.
-  #checkov:skip=CKV2_AWS_3:Org/Region will be defined by the Admin account.
-  for_each = var.member_config != null ? { for member in var.member_config : member.account_id => member } : {}
-  provider = aws.member
-
-  enable = each.value.enable
-}
-
-resource "aws_guardduty_member" "member" {
-  for_each = var.member_config != null ? { for member in var.member_config : member.account_id => member } : {}
-
-  account_id                 = each.value.account_id
-  detector_id                = var.member_only ? data.aws_guardduty_detector.primary[0].id : aws_guardduty_detector.primary[0].id
-  email                      = each.value.email
-  invite                     = each.value.invite
-  invitation_message         = each.value.invitation_message
-  disable_email_notification = each.value.disable_email_notification
-
-  lifecycle {
-    ignore_changes = [
-      # For why this is necessary, see https://github.com/hashicorp/terraform-provider-aws/issues/8206
-      invite,
-      disable_email_notification,
-      invitation_message,
-    ]
-  }
-
-  provisioner "local-exec" {
-    command = "aws guardduty disassociate-members --detector-id ${self.detector_id} --account-ids ${self.account_id}"
-    when    = destroy
-  }
-}
-
-resource "aws_guardduty_invite_accepter" "member" {
-  for_each = var.member_config != null ? { for member in var.member_config : member.account_id => member if member.invite } : {}
-  provider = aws.member
-
-  detector_id       = aws_guardduty_detector.member[each.key].id
-  master_account_id = var.member_only ? data.aws_caller_identity.current.account_id : aws_guardduty_detector.primary[0].account_id
-
-  depends_on = [aws_guardduty_member.member]
-}
-
-#####################################
-# GuardDuty Filter                  #
-#####################################
+##################################################
+# GuardDuty Filter
+##################################################
 resource "aws_guardduty_filter" "this" {
   for_each = var.enable_guardduty && var.filter_config != null ? { for filter in var.filter_config : filter.name => filter } : {}
 
-  detector_id = aws_guardduty_detector.primary[0].id
+  detector_id = aws_guardduty_detector.primary.id
 
   name        = each.value.name
   action      = each.value.action
@@ -151,13 +78,13 @@ resource "aws_guardduty_filter" "this" {
   )
 }
 
-#####################################
-# GuardDuty IPSet                   #
-#####################################
+##################################################
+# GuardDuty IPSet
+##################################################
 resource "aws_guardduty_ipset" "this" {
   for_each = var.enable_guardduty && var.ipset_config != null ? { for ipset in var.ipset_config : ipset.name => ipset } : {}
 
-  detector_id = aws_guardduty_detector.primary[0].id
+  detector_id = aws_guardduty_detector.primary.id
 
   activate = each.value.activate
   name     = each.value.name
@@ -184,13 +111,13 @@ resource "aws_s3_object" "ipset_object" {
   )
 }
 
-#####################################
-# GuardDuty ThreatIntelSet          #
-#####################################
+##################################################
+# GuardDuty ThreatIntelSet
+##################################################
 resource "aws_guardduty_threatintelset" "this" {
   for_each = var.enable_guardduty && var.threatintelset_config != null ? { for threatintelset in var.threatintelset_config : threatintelset.name => threatintelset } : {}
 
-  detector_id = aws_guardduty_detector.primary[0].id
+  detector_id = aws_guardduty_detector.primary.id
 
   activate = each.value.activate
   name     = each.value.name
@@ -217,13 +144,13 @@ resource "aws_s3_object" "threatintelset_object" {
   )
 }
 
-#####################################
-# GuardDuty Publishing Destination  #
-#####################################
+##################################################
+# GuardDuty Publishing Destination
+##################################################
 resource "aws_guardduty_publishing_destination" "this" {
   for_each = var.enable_guardduty && var.publish_to_s3 ? { for destination in var.publishing_config : destination.destination_type => destination } : {}
 
-  detector_id      = aws_guardduty_detector.primary[0].id
+  detector_id      = aws_guardduty_detector.primary.id
   destination_arn  = each.value.destination_arn == null ? module.s3_bucket[0].s3_bucket_arn : each.value.destination_arn
   kms_key_arn      = each.value.kms_key_arn == null ? aws_kms_key.guardduty_key[0].arn : each.value.kms_key_arn
   destination_type = each.value.destination_type
@@ -234,9 +161,9 @@ resource "aws_guardduty_publishing_destination" "this" {
   ]
 }
 
-#####################################
-# Support Resources                 #
-#####################################
+##################################################
+# Supporting Resources
+##################################################
 resource "random_string" "this" {
   count = var.ipset_config != null || var.threatintelset_config != null || var.publish_to_s3 ? 1 : 0
 
@@ -245,9 +172,9 @@ resource "random_string" "this" {
   special = false
 }
 
-#####################################
-# KMS Key                           #
-#####################################
+##################################################
+# KMS Key
+##################################################
 resource "aws_kms_key" "guardduty_key" {
   count = var.ipset_config != null || var.threatintelset_config != null || var.publish_to_s3 ? 1 : 0
 
@@ -280,9 +207,9 @@ resource "aws_kms_key" "replica_key" {
   )
 }
 
-#####################################
-# IAM                               #
-#####################################
+##################################################
+# IAM
+##################################################
 resource "aws_iam_role" "bucket_replication" {
   count = var.ipset_config != null || var.threatintelset_config != null || var.publish_to_s3 ? 1 : 0
 
@@ -304,14 +231,14 @@ resource "aws_iam_role_policy_attachment" "replication" {
   policy_arn = aws_iam_policy.bucket_replication[0].arn
 }
 
-#####################################
-# S3 Buckets                        #
-#####################################
+##################################################
+# S3 Buckets
+##################################################
 module "s3_bucket" {
   count = var.ipset_config != null || var.threatintelset_config != null || var.publish_to_s3 ? 1 : 0
 
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "3.8.2"
+  version = "3.14.0"
 
   bucket = var.guardduty_s3_bucket == null ? "guardduty-${data.aws_caller_identity.current.account_id}-${random_string.this[0].result}-bucket" : var.guardduty_s3_bucket
   acl    = var.guardduty_bucket_acl
@@ -390,10 +317,15 @@ module "s3_bucket" {
     local.tags,
     var.tags
   )
-  
+
   depends_on = [
     module.replica_bucket
   ]
+}
+
+provider "aws" {
+  region = try(var.replica_region, data.aws_region.current)
+  alias  = "replica"
 }
 
 module "replica_bucket" {
@@ -404,7 +336,7 @@ module "replica_bucket" {
   }
 
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "3.8.2"
+  version = "3.14.0"
 
   bucket = var.guardduty_s3_bucket == null ? "guardduty-${data.aws_caller_identity.current.account_id}-${random_string.this[0].result}-replica-bucket" : var.guardduty_s3_bucket
   acl    = var.guardduty_bucket_acl
@@ -442,10 +374,10 @@ module "log_bucket" {
   count = var.ipset_config != null || var.threatintelset_config != null || var.publish_to_s3 ? 1 : 0
 
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "3.8.2"
+  version = "3.14.0"
 
   bucket = var.guardduty_s3_bucket == null ? "guardduty-${data.aws_caller_identity.current.account_id}-${random_string.this[0].result}-log-bucket" : var.guardduty_s3_bucket
-  acl    = "log-delivery-write"
+  acl    = null #"log-delivery-write"
 
   block_public_acls       = true
   block_public_policy     = true

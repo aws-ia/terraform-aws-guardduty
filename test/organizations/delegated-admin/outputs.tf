@@ -1,4 +1,4 @@
 output "delegated_admin" {
   description = "AWS GuardDuty Detector Delegated Admin."
-  value       = module.admin_guardduty
+  value       = module.delegated_admin
 }

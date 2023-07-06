@@ -12,13 +12,14 @@ No requirements.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_member_guardduty"></a> [member\_guardduty](#module\_member\_guardduty) | ../../../ | n/a |
+| <a name="module_member"></a> [member](#module\_member) | ../../../modules/organizations_member/ | n/a |
 
 ## Resources
 
 | Name | Type |
 |------|------|
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
+| [aws_guardduty_detector.primary](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/guardduty_detector) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs

@@ -5,6 +5,9 @@ terraform {
     aws = {
       source  = "hashicorp/aws"
       version = ">= 4.47"
+      configuration_aliases = [
+        aws.member,
+      ]
     }
     random = {
       source  = "hashicorp/random"
