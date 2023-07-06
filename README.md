@@ -7,7 +7,7 @@ Terraform module that creates AWS GuardDuty resources.
     - [Standalone](#standalone)
     - [Organizations](#organizations)
   - [Overview Diagrams](#overview-diagrams)
-    - [Stand-Alone](#stand-alone)
+    - [Standalone](#standalone-1)
     - [Organizations](#organizations-1)
   - [Terraform Module](#terraform-module)
 
@@ -106,13 +106,13 @@ module "guardduty_detector" {
 
 ## Overview Diagrams
 
-### Stand-Alone
+### Standalone
 
-![standalone-diagram](./docs/StandaloneGuardDuty\_v1.png)
+![standalone-diagram](./docs/Architectures-GuardDuty\_Standalone.png)
 
 ### Organizations
 
-![organizations-diagram](./docs/OrgGuardDuty\_v1.png)
+![organizations-diagram](./docs/Architectures-GuardDuty\_Org.png)
 
 ## Terraform Module
 
