@@ -1,8 +1,8 @@
 data "aws_caller_identity" "current" {}
 
 module "delegated_admin" {
-  #  source = "github.com/rodrigobersa/terraform-aws-guardduty"
-  source = "../../../modules/organizations_admin/"
+  source  = "aws-ia/guardduty/aws//modules/organizations_admin"
+  version = "0.0.2"
 
   admin_account_id                 = data.aws_caller_identity.current.account_id
   auto_enable_organization_members = "NEW"
@@ -14,8 +14,8 @@ module "delegated_admin" {
 }
 
 module "guardduty_detector" {
-  #  source = "github.com/rodrigobersa/terraform-aws-guardduty"
-  source = "../../../"
+  source  = "aws-ia/guardduty/aws"
+  version = "0.0.2"
 
   enable_guardduty = true
 

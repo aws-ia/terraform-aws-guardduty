@@ -1,6 +1,6 @@
 module "standalone_guardduty" {
-  #  source = "github.com/rodrigobersa/terraform-aws-guardduty"
-  source = "../../../"
+  source  = "aws-ia/guardduty/aws"
+  version = "0.0.2"
 
   replica_region               = "us-east-1"
   enable_guardduty             = true
