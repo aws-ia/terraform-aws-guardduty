@@ -1,8 +1,7 @@
 locals {
   snapshot_preservation = var.enable_snapshot_retention ? "'RETENTION_WITH_FINDING'" : "'NO_RETENTION'"
   tags = {
-    Example    = basename(path.cwd)
-    Repository = "https://github.com/rodrigobersa/terraform-aws-guardduty"
+    Repository = "https://github.com/aws-ia/terraform-aws-guardduty"
   }
 }
 
@@ -192,6 +191,7 @@ resource "aws_kms_key" "guardduty_key" {
 }
 
 resource "aws_kms_key" "replica_key" {
+  #checkov:skip=CKV2_AWS_64:TODO fix KMS Policy
   count = var.ipset_config != null || var.threatintelset_config != null || var.publish_to_s3 ? 1 : 0
 
   provider = aws.replica
@@ -339,7 +339,7 @@ module "replica_bucket" {
   version = "3.14.0"
 
   bucket = var.guardduty_s3_bucket == null ? "guardduty-${data.aws_caller_identity.current.account_id}-${random_string.this[0].result}-replica-bucket" : var.guardduty_s3_bucket
-  acl    = var.guardduty_bucket_acl
+  acl    = null #bucket doesn't accept ACLs
 
   attach_policy                         = true
   policy                                = data.aws_iam_policy_document.guardduty_replica_bucket_policy[0].json
