@@ -31,6 +31,48 @@ variable "enable_malware_protection" {
   default     = true
 }
 
+variable "enable_rds_login_events" {
+  description = "Configure and enable RDS Login Events Monitoring. Defaults to `false`."
+  type        = bool
+  default     = false
+}
+
+variable "enable_lambda_network_logs" {
+  description = "Configure and enable Lambda Newtork Logs Monitoring. Defaults to `false`."
+  type        = bool
+  default     = false
+}
+
+variable "enable_eks_runtime_monitoring" {
+  description = "Configure and enable EKS Runtime Montoring. Specifying both EKS Runtime Monitoring and Runtime Monitoring will cause an error. Defaults to `false`."
+  type        = bool
+  default     = false
+}
+
+variable "enable_runtime_monitoring" {
+  description = "Configure and enable Runtime Monitoring. Specifying both EKS Runtime Monitoring and Runtime Monitoring  will cause an error. Defaults to `false`."
+  type        = bool
+  default     = false
+}
+
+variable "enable_eks_addon_management" {
+  description = "Configure and enable EKS Addon Mangement  additional configuration of EKS Runtime Monitoring/Runtime Monitoring. Defaults to `false`."
+  type        = bool
+  default     = false
+}
+
+variable "enable_ecs_fargate_agent_management" {
+  description = "Configure and enable ECS Fargate Agent Management additional configuration of Runtime Monitoring. Defaults to `false`."
+  type        = bool
+  default     = false
+}
+
+variable "enable_ec2_agent_management" {
+  description = "Configure and enable EC2 Agent Management additional configuration of Runtime Monitoring. Defaults to `false`."
+  type        = bool
+  default     = false
+}
+
 variable "enable_snapshot_retention" {
   description = "Enable EBS Snaptshot retention for 30 days, if any Findings exists. Defaults to `false`."
   type        = bool
