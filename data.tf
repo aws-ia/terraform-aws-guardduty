@@ -24,6 +24,18 @@ data "aws_iam_policy_document" "guardduty_bucket_policy" {
       type        = "Service"
       identifiers = ["guardduty.amazonaws.com"]
     }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceArn"
+      values   = [aws_guardduty_detector.primary.arn]
+    }
   }
 
   statement {
@@ -39,6 +51,87 @@ data "aws_iam_policy_document" "guardduty_bucket_policy" {
     principals {
       type        = "Service"
       identifiers = ["guardduty.amazonaws.com"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceArn"
+      values   = [aws_guardduty_detector.primary.arn]
+    }
+  }
+
+  statement {
+    sid    = "DenyUnencryptedObjectUploads"
+    effect = "Deny"
+    actions = [
+      "s3:PutObject"
+    ]
+
+    resources = [
+      "${module.s3_bucket[0].s3_bucket_arn}/*"
+    ]
+
+    principals {
+      type        = "Service"
+      identifiers = ["guardduty.amazonaws.com"]
+    }
+
+    condition {
+      test     = "StringNotEquals"
+      variable = "s3:x-amz-server-side-encryption"
+      values   = ["aws:kms"]
+    }
+  }
+
+  statement {
+    sid    = "DenyIncorrectEncryptionHeader"
+    effect = "Deny"
+    actions = [
+      "s3:PutObject"
+    ]
+
+    resources = [
+      "${module.s3_bucket[0].s3_bucket_arn}/*"
+    ]
+
+    principals {
+      type        = "Service"
+      identifiers = ["guardduty.amazonaws.com"]
+    }
+
+    condition {
+      test     = "StringNotEquals"
+      variable = "s3:x-amz-server-side-encryption-aws-kms-key-id"
+      values   = [aws_kms_key.guardduty_key[0].arn]
+    }
+  }
+
+  statement {
+    sid    = "DenyNonHttpsAccess"
+    effect = "Deny"
+    actions = [
+      "s3:*"
+    ]
+
+    resources = [
+      "${module.s3_bucket[0].s3_bucket_arn}/*"
+    ]
+
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values   = ["false"]
     }
   }
 }
@@ -60,6 +153,18 @@ data "aws_iam_policy_document" "guardduty_replica_bucket_policy" {
       type        = "Service"
       identifiers = ["guardduty.amazonaws.com"]
     }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceArn"
+      values   = [aws_guardduty_detector.primary.arn]
+    }
   }
 
   statement {
@@ -75,6 +180,87 @@ data "aws_iam_policy_document" "guardduty_replica_bucket_policy" {
     principals {
       type        = "Service"
       identifiers = ["guardduty.amazonaws.com"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceArn"
+      values   = [aws_guardduty_detector.primary.arn]
+    }
+  }
+
+  statement {
+    sid    = "DenyUnencryptedObjectUploads"
+    effect = "Deny"
+    actions = [
+      "s3:PutObject"
+    ]
+
+    resources = [
+      "${module.replica_bucket[0].s3_bucket_arn}/*"
+    ]
+
+    principals {
+      type        = "Service"
+      identifiers = ["guardduty.amazonaws.com"]
+    }
+
+    condition {
+      test     = "StringNotEquals"
+      variable = "s3:x-amz-server-side-encryption"
+      values   = ["aws:kms"]
+    }
+  }
+
+  statement {
+    sid    = "DenyIncorrectEncryptionHeader"
+    effect = "Deny"
+    actions = [
+      "s3:PutObject"
+    ]
+
+    resources = [
+      "${module.replica_bucket[0].s3_bucket_arn}/*"
+    ]
+
+    principals {
+      type        = "Service"
+      identifiers = ["guardduty.amazonaws.com"]
+    }
+
+    condition {
+      test     = "StringNotEquals"
+      variable = "s3:x-amz-server-side-encryption-aws-kms-key-id"
+      values   = [aws_kms_key.guardduty_key[0].arn]
+    }
+  }
+
+  statement {
+    sid    = "DenyNonHttpsAccess"
+    effect = "Deny"
+    actions = [
+      "s3:*"
+    ]
+
+    resources = [
+      "${module.replica_bucket[0].s3_bucket_arn}/*"
+    ]
+
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values   = ["false"]
     }
   }
 }
@@ -95,6 +281,18 @@ data "aws_iam_policy_document" "guardduty_kms_policy" {
     principals {
       type        = "Service"
       identifiers = ["guardduty.amazonaws.com"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceArn"
+      values   = [aws_guardduty_detector.primary.arn]
     }
   }
 
