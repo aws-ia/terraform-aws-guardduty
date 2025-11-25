@@ -3,7 +3,7 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 data "aws_iam_role" "malware_protection" {
-  count = var.create_malware_protection_role ? 1 : 0
+  count = var.create_malware_protection_role ? 0 : 1
   name  = "AWSServiceRoleForAmazonGuardDutyMalwareProtection"
 }
 
