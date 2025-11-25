@@ -132,7 +132,7 @@ resource "aws_guardduty_detector_feature" "ebs_protection" {
 ##################################################
 resource "aws_guardduty_malware_protection_plan" "this" {
   for_each = var.enable_guardduty && var.enable_malware_protection ? toset(var.malware_resource_protection) : []
-  role     = var.create_malware_protection_role ? aws_iam_service_linked_role.malware_protection : data.aws_iam_role.malware_protection
+  role     = var.create_malware_protection_role ? aws_iam_service_linked_role.malware_protection[0].arn : data.aws_iam_role.malware_protection[0].arn
 
   protected_resource {
     s3_bucket {
